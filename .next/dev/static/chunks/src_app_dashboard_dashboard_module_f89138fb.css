@@ -1,0 +1,403 @@
+/* [project]/src/app/dashboard/dashboard.module.css [app-client] (css) */
+.dashboard-module__XABe8G__dashboard {
+  background-color: var(--background);
+  min-height: 100vh;
+  color: var(--foreground);
+  padding-bottom: 6rem;
+  font-family: Inter, sans-serif;
+}
+
+.dashboard-module__XABe8G__container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.dashboard-module__XABe8G__header {
+  z-index: 40;
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  background: #0f172af2;
+  margin-bottom: 2rem;
+  padding: .75rem 0;
+  position: sticky;
+  top: 0;
+}
+
+.dashboard-module__XABe8G__headerContent {
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  display: flex;
+}
+
+.dashboard-module__XABe8G__logo {
+  background: linear-gradient(to right, #818cf8, #c084fc);
+  color: #0000;
+  -webkit-background-clip: text;
+  background-clip: text;
+  align-items: center;
+  gap: .5rem;
+  font-size: 1.25rem;
+  font-weight: 800;
+  text-decoration: none;
+  display: flex;
+}
+
+.dashboard-module__XABe8G__logoText {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .dashboard-module__XABe8G__logoText {
+    display: inline;
+  }
+}
+
+.dashboard-module__XABe8G__searchBar {
+  flex: 1;
+  max-width: 400px;
+  display: none;
+  position: relative;
+}
+
+@media (min-width: 640px) {
+  .dashboard-module__XABe8G__searchBar {
+    display: block;
+  }
+}
+
+.dashboard-module__XABe8G__searchInput {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: #fff;
+  border-radius: 99px;
+  width: 100%;
+  padding: .6rem 1rem .6rem 2.5rem;
+  font-size: .9rem;
+  transition: border-color .2s;
+}
+
+.dashboard-module__XABe8G__searchInput:focus {
+  border-color: var(--primary);
+  outline: none;
+  box-shadow: 0 0 0 2px #6366f133;
+}
+
+.dashboard-module__XABe8G__searchIcon {
+  color: #64748b;
+  pointer-events: none;
+  width: 1.2rem;
+  height: 1.2rem;
+  position: absolute;
+  top: 50%;
+  left: .8rem;
+  transform: translateY(-50%);
+}
+
+.dashboard-module__XABe8G__userActions {
+  align-items: center;
+  gap: 1rem;
+  display: flex;
+}
+
+.dashboard-module__XABe8G__iconButton {
+  color: #94a3b8;
+  cursor: pointer;
+  background: none;
+  border: none;
+  border-radius: 50%;
+  justify-content: center;
+  align-items: center;
+  padding: .5rem;
+  font-size: 1.2rem;
+  transition: bg .2s;
+  display: flex;
+}
+
+.dashboard-module__XABe8G__iconButton:hover {
+  color: #fff;
+  background: #ffffff0d;
+}
+
+@media (min-width: 640px) {
+  .dashboard-module__XABe8G__mobileSearchBtn {
+    display: none;
+  }
+}
+
+.dashboard-module__XABe8G__avatar {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: #fff;
+  border: 2px solid var(--surface);
+  cursor: pointer;
+  border-radius: 50%;
+  justify-content: center;
+  align-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  font-size: .9rem;
+  font-weight: 600;
+  display: flex;
+  box-shadow: 0 0 0 2px #6366f11a;
+}
+
+.dashboard-module__XABe8G__welcome {
+  padding: 1rem 0 2rem;
+}
+
+.dashboard-module__XABe8G__welcomeTitle {
+  color: #fff;
+  margin-bottom: .5rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.dashboard-module__XABe8G__welcomeSubtitle {
+  color: #94a3b8;
+  font-size: .95rem;
+}
+
+.dashboard-module__XABe8G__statsGrid {
+  grid-template-columns: repeat(2, 1fr);
+  gap: .75rem;
+  margin-bottom: 2rem;
+  display: grid;
+}
+
+@media (min-width: 640px) {
+  .dashboard-module__XABe8G__statsGrid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+  }
+}
+
+.dashboard-module__XABe8G__statCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  flex-direction: column;
+  padding: 1rem;
+  transition: transform .2s;
+  display: flex;
+}
+
+.dashboard-module__XABe8G__statCard:active {
+  transform: scale(.98);
+}
+
+.dashboard-module__XABe8G__statValue {
+  color: #fff;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.dashboard-module__XABe8G__statLabel {
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  margin-top: .25rem;
+  font-size: .75rem;
+}
+
+.dashboard-module__XABe8G__filters {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  gap: .5rem;
+  margin-bottom: 1rem;
+  padding: .25rem .25rem 1rem;
+  display: flex;
+  overflow-x: auto;
+}
+
+.dashboard-module__XABe8G__filters::-webkit-scrollbar {
+  display: none;
+}
+
+.dashboard-module__XABe8G__filterChip {
+  white-space: nowrap;
+  cursor: pointer;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: #94a3b8;
+  border-radius: 99px;
+  flex-shrink: 0;
+  padding: .5rem 1rem;
+  font-size: .85rem;
+  font-weight: 500;
+  transition: all .2s;
+}
+
+.dashboard-module__XABe8G__filterChip:hover {
+  background: var(--surface-hover);
+  color: var(--foreground);
+}
+
+.dashboard-module__XABe8G__filterChip.dashboard-module__XABe8G__active {
+  border-color: var(--primary);
+  color: #818cf8;
+  background: #6366f126;
+}
+
+.dashboard-module__XABe8G__jobsList {
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  display: grid;
+}
+
+@media (min-width: 768px) {
+  .dashboard-module__XABe8G__jobsList {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.dashboard-module__XABe8G__jobCard {
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  background: #1e293b66;
+  border-radius: 1rem;
+  flex-direction: column;
+  padding: 1.25rem;
+  transition: all .2s;
+  display: flex;
+  position: relative;
+  overflow: hidden;
+}
+
+.dashboard-module__XABe8G__jobCard:hover {
+  background: #1e293bcc;
+  border-color: #6366f14d;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px #0000001a;
+}
+
+.dashboard-module__XABe8G__jobCard:before {
+  content: "";
+  background: var(--primary);
+  opacity: 0;
+  width: 3px;
+  height: 100%;
+  transition: opacity .2s;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.dashboard-module__XABe8G__jobCard:hover:before {
+  opacity: 1;
+}
+
+.dashboard-module__XABe8G__jobHeader {
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: .75rem;
+  display: flex;
+}
+
+.dashboard-module__XABe8G__jobTitle {
+  color: #fff;
+  margin-bottom: .25rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.dashboard-module__XABe8G__jobCompany {
+  color: #94a3b8;
+  align-items: center;
+  gap: .35rem;
+  font-size: .85rem;
+  display: flex;
+}
+
+.dashboard-module__XABe8G__verifiedBadge {
+  color: var(--accent);
+  background: #10b9811a;
+  border-radius: 50%;
+  justify-content: center;
+  align-items: center;
+  width: 1rem;
+  height: 1rem;
+  font-size: .8rem;
+  display: inline-flex;
+}
+
+.dashboard-module__XABe8G__priceTag {
+  color: var(--accent);
+  white-space: nowrap;
+  background: #10b9811a;
+  border-radius: .5rem;
+  padding: .25rem .5rem;
+  font-size: .9rem;
+  font-weight: 700;
+}
+
+.dashboard-module__XABe8G__jobDetails {
+  color: #64748b;
+  gap: 1rem;
+  margin-top: auto;
+  margin-bottom: 1rem;
+  padding-top: 1rem;
+  font-size: .8rem;
+  display: flex;
+}
+
+.dashboard-module__XABe8G__detailItem {
+  align-items: center;
+  gap: .35rem;
+  display: flex;
+}
+
+.dashboard-module__XABe8G__tags {
+  flex-wrap: wrap;
+  gap: .5rem;
+  display: flex;
+}
+
+.dashboard-module__XABe8G__tag {
+  color: #94a3b8;
+  background: #ffffff08;
+  border: 1px solid #ffffff0d;
+  border-radius: .35rem;
+  padding: .25rem .5rem;
+  font-size: .75rem;
+}
+
+.dashboard-module__XABe8G__fab {
+  background: var(--primary);
+  color: #fff;
+  z-index: 50;
+  cursor: pointer;
+  border: none;
+  border-radius: 50%;
+  justify-content: center;
+  align-items: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  transition: all .3s cubic-bezier(.175, .885, .32, 1.275);
+  display: flex;
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  box-shadow: 0 4px 15px #6366f166;
+}
+
+.dashboard-module__XABe8G__fab:hover {
+  background: var(--primary-hover);
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px #6366f199;
+}
+
+.dashboard-module__XABe8G__fab:active {
+  transform: scale(.95);
+}
+
+.dashboard-module__XABe8G__fabIcon {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+/*# sourceMappingURL=src_app_dashboard_dashboard_module_f89138fb.css.map*/
