@@ -7,13 +7,14 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
 export default function PerfilPage() {
-    const { user, isLoggedIn } = useAuth();
+    const { user, isLoggedIn, isLoading } = useAuth();
     const router = useRouter();
 
     useEffect(() => {
-        if (!isLoggedIn) router.push('/login');
-    }, [isLoggedIn, router]);
+        if (!isLoading && !isLoggedIn) router.push('/login');
+    }, [isLoggedIn, isLoading, router]);
 
+    if (isLoading) return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: 'white' }}>Cargando perfil...</div>;
     if (!user) return null;
 
     return user.role === 'empleador'

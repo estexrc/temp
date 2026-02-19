@@ -1,22 +1,47 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { supabase } from '@/lib/supabase';
 import styles from './dashboard.module.css';
 import PostJobModal from './PostJobModal';
 
-interface Job {
-    id: number;
+export interface Job {
+    id: string;
     title: string;
-    employer: string;
-    verified: boolean;
-    price: string;
-    type: string;
+    employer_name: string;
+    verified?: boolean;
+    amount: number;
+    payment_type: 'hourly' | 'total';
     location: string;
-    time: string;
+    created_at: string;
     tags: string[];
     urgent: boolean;
+    description: string;
 }
+
+// Helper to format currency
+const formatPrice = (amount: number) => {
+    return new Intl.NumberFormat('es-AR', {
+        style: 'currency',
+        currency: 'ARS',
+        maximumFractionDigits: 0,
+    }).format(amount);
+};
+
+// Helper for relative time
+const timeAgo = (dateStr: string) => {
+    const now = new Date();
+    const then = new Date(dateStr);
+    const diffInMs = now.getTime() - then.getTime();
+    const diffInMins = Math.floor(diffInMs / 60000);
+    const diffInHours = Math.floor(diffInMins / 60);
+
+    if (diffInMins < 1) return 'Ahora';
+    if (diffInMins < 60) return `Hace ${diffInMins}min`;
+    if (diffInHours < 24) return `Hace ${diffInHours}h`;
+    return then.toLocaleDateString();
+};
 
 const INITIAL_JOBS: Job[] = [
     {
@@ -70,12 +95,35 @@ const INITIAL_JOBS: Job[] = [
 ];
 
 export default function Dashboard() {
-    const [jobs, setJobs] = useState<Job[]>(INITIAL_JOBS);
+    const [jobs, setJobs] = useState<Job[]>([]);
+    const [loading, setLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [activeFilter, setActiveFilter] = useState('Para ti');
     const { user } = useAuth();
-    const firstName = user?.name.split(' ')[0] || 'Juan';
+
+    const firstName = user?.name.split(' ')[0] || 'Invitado';
     const avatarInitials = user?.name.split(' ').map((n: string) => n[0]).join('').toUpperCase().slice(0, 2) || 'JS';
+
+    const fetchJobs = async () => {
+        try {
+            setLoading(true);
+            const { data, error } = await supabase
+                .from('jobs')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) throw error;
+            setJobs(data as Job[]);
+        } catch (err) {
+            console.error('Error fetching jobs:', err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchJobs();
+    }, []);
 
     const handleNewJob = (job: Job) => {
         setJobs(prev => [job, ...prev]);
@@ -124,9 +172,11 @@ export default function Dashboard() {
                 <section className={styles.welcome}>
                     <h1 className={styles.welcomeTitle}>Hola, {firstName} 👋</h1>
                     <p className={styles.welcomeSubtitle}>
-                        {jobs.length > INITIAL_JOBS.length
-                            ? `Publicaste ${jobs.length - INITIAL_JOBS.length} trabajo${jobs.length - INITIAL_JOBS.length > 1 ? 's' : ''} hoy. ¡Genial!`
-                            : 'Hay 12 nuevos trabajos cerca de ti hoy.'}
+                        {loading
+                            ? 'Buscando las mejores oportunidades...'
+                            : jobs.length === 0
+                                ? 'No hay trabajos publicados aún. ¡Sé el primero!'
+                                : `Hay ${jobs.length} trabajos disponibles hoy.`}
                     </p>
                 </section>
 
@@ -164,51 +214,59 @@ export default function Dashboard() {
 
                 {/* Jobs List */}
                 <div className={styles.jobsList}>
-                    {jobs.map((job) => (
-                        <div key={job.id} className={`${styles.jobCard} ${job.urgent ? styles.urgentCard : ''}`}>
-                            <div className={styles.jobHeader}>
-                                <div>
-                                    <h3 className={styles.jobTitle}>
-                                        {job.urgent && <span style={{ marginRight: '0.4rem' }}>🔥</span>}
-                                        {job.title}
-                                    </h3>
-                                    <div className={styles.jobCompany}>
-                                        {job.employer}
-                                        {job.verified && (
-                                            <span className={styles.verifiedBadge} title="Verificado">✓</span>
-                                        )}
+                    {loading ? (
+                        <div className={styles.loadingContainer}>Cargando trabajos...</div>
+                    ) : jobs.length === 0 ? (
+                        <div className={styles.emptyContainer}>
+                            <p>No se encontraron trabajos.</p>
+                        </div>
+                    ) : (
+                        jobs.map((job) => (
+                            <div key={job.id} className={`${styles.jobCard} ${job.urgent ? styles.urgentCard : ''}`}>
+                                <div className={styles.jobHeader}>
+                                    <div>
+                                        <h3 className={styles.jobTitle}>
+                                            {job.urgent && <span style={{ marginRight: '0.4rem' }}>🔥</span>}
+                                            {job.title}
+                                        </h3>
+                                        <div className={styles.jobCompany}>
+                                            {job.employer_name}
+                                            {job.verified && <span className={styles.verifiedBadge} title="Verificado">✓</span>}
+                                        </div>
+                                    </div>
+                                    <div className={styles.priceTag}>
+                                        {formatPrice(job.amount)}{' '}
+                                        <span style={{ fontSize: '0.7em', opacity: 0.8 }}>
+                                            {job.payment_type === 'hourly' ? '/hora' : 'Total'}
+                                        </span>
                                     </div>
                                 </div>
-                                <div className={styles.priceTag}>
-                                    {job.price}{' '}
-                                    <span style={{ fontSize: '0.7em', opacity: 0.8 }}>{job.type}</span>
-                                </div>
-                            </div>
 
-                            <div className={styles.jobDetails}>
-                                <div className={styles.detailItem}>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                                        <circle cx="12" cy="10" r="3"></circle>
-                                    </svg>
-                                    {job.location}
+                                <div className={styles.jobDetails}>
+                                    <div className={styles.detailItem}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                            <circle cx="12" cy="10" r="3"></circle>
+                                        </svg>
+                                        {job.location}
+                                    </div>
+                                    <div className={styles.detailItem}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <circle cx="12" cy="12" r="10"></circle>
+                                            <polyline points="12 6 12 12 16 14"></polyline>
+                                        </svg>
+                                        {timeAgo(job.created_at)}
+                                    </div>
                                 </div>
-                                <div className={styles.detailItem}>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                        <circle cx="12" cy="12" r="10"></circle>
-                                        <polyline points="12 6 12 12 16 14"></polyline>
-                                    </svg>
-                                    {job.time}
-                                </div>
-                            </div>
 
-                            <div className={styles.tags}>
-                                {job.tags.map(tag => (
-                                    <span key={tag} className={styles.tag}>{tag}</span>
-                                ))}
+                                <div className={styles.tags}>
+                                    {job.tags?.map(tag => (
+                                        <span key={tag} className={styles.tag}>{tag}</span>
+                                    ))}
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        ))
+                    )}
                 </div>
             </main>
 

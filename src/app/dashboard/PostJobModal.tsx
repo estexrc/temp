@@ -1,6 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import { useAuth } from '../context/AuthContext';
+import { supabase } from '@/lib/supabase';
+import { Job } from './page';
 import styles from './PostJobModal.module.css';
 
 interface NewJob {
@@ -15,21 +18,12 @@ interface NewJob {
 
 interface PostJobModalProps {
     onClose: () => void;
-    onSubmit: (job: {
-        id: number;
-        title: string;
-        employer: string;
-        verified: boolean;
-        price: string;
-        type: string;
-        location: string;
-        time: string;
-        tags: string[];
-        urgent: boolean;
-    }) => void;
+    onSubmit: (job: Job) => void;
 }
 
 export default function PostJobModal({ onClose, onSubmit }: PostJobModalProps) {
+    const { user } = useAuth();
+    const [loading, setLoading] = useState(false);
     const [form, setForm] = useState<NewJob>({
         title: '',
         description: '',
@@ -48,29 +42,46 @@ export default function PostJobModal({ onClose, onSubmit }: PostJobModalProps) {
         setForm(prev => ({ ...prev, [target.name]: value }));
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!form.title.trim() || !form.amount.trim()) return;
+        if (!form.title.trim() || !form.amount.trim() || !user) return;
+
+        setLoading(true);
 
         const tags = form.rawTags
             .split(',')
             .map(t => t.trim())
             .filter(Boolean);
 
-        onSubmit({
-            id: Date.now(),
-            title: form.title.trim(),
-            employer: 'Tú (nuevo)',
-            verified: false,
-            price: `$${form.amount}`,
-            type: form.paymentType === 'hora' ? '/hora' : 'Total',
-            location: form.location.trim() || 'Remoto',
-            time: 'Ahora mismo',
-            tags: tags.length ? tags : ['Nuevo'],
-            urgent: form.urgent,
-        });
+        try {
+            const { data, error } = await supabase
+                .from('jobs')
+                .insert({
+                    employer_id: user.id,
+                    employer_name: user.name,
+                    title: form.title.trim(),
+                    description: form.description.trim(),
+                    payment_type: form.paymentType === 'hora' ? 'hourly' : 'total',
+                    amount: parseFloat(form.amount) || 0,
+                    location: form.location.trim() || 'Remoto',
+                    tags: tags.length ? tags : ['General'],
+                    urgent: form.urgent,
+                })
+                .select()
+                .single();
 
-        onClose();
+            if (error) throw error;
+
+            if (data) {
+                onSubmit(data as Job);
+                onClose();
+            }
+        } catch (err) {
+            console.error('Error creating job:', err);
+            alert('Error al publicar el trabajo. Por favor intenta de nuevo.');
+        } finally {
+            setLoading(false);
+        }
     };
 
     // Cerrar al hacer click fuera del panel
@@ -208,8 +219,8 @@ export default function PostJobModal({ onClose, onSubmit }: PostJobModalProps) {
                         <span className={styles.urgentLabel}>🔥 Marcar como urgente</span>
                     </label>
 
-                    <button type="submit" className={styles.submitBtn}>
-                        Publicar trabajo
+                    <button type="submit" className={`${styles.submitBtn} ${loading ? styles.loading : ''}`} disabled={loading}>
+                        {loading ? 'Publicando...' : 'Publicar trabajo'}
                     </button>
                 </form>
             </div>

@@ -1,17 +1,44 @@
-'use client';
-
+import { useState, useEffect } from 'react';
 import { useAuth, User } from '../context/AuthContext';
+import { supabase } from '@/lib/supabase';
+import { Job } from '../dashboard/page';
 import styles from './perfil.module.css';
 
-const MOCK_JOBS_POSTED = [
-    { id: 1, title: 'Ayuda mudanza caja fuerte', applicants: 4, status: 'Activo', price: '$50 Total' },
-    { id: 2, title: 'Limpieza post-obra', applicants: 7, status: 'Activo', price: '$12,000 Total' },
-    { id: 3, title: 'Recepcionista evento', applicants: 12, status: 'Completado', price: '$3,000 Total' },
-];
+const formatPrice = (amount: number) => {
+    return new Intl.NumberFormat('es-AR', {
+        style: 'currency',
+        currency: 'ARS',
+        maximumFractionDigits: 0,
+    }).format(amount);
+};
 
 export default function EmpleadorProfile({ user }: { user: User }) {
     const { logout } = useAuth();
+    const [jobs, setJobs] = useState<Job[]>([]);
+    const [loading, setLoading] = useState(true);
+
     const initials = user.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+
+    useEffect(() => {
+        const fetchMyJobs = async () => {
+            try {
+                const { data, error } = await supabase
+                    .from('jobs')
+                    .select('*')
+                    .eq('employer_id', user.id)
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+                setJobs(data as Job[]);
+            } catch (err) {
+                console.error('Error fetching employer jobs:', err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchMyJobs();
+    }, [user.id]);
 
     return (
         <div className={styles.page}>
@@ -48,15 +75,15 @@ export default function EmpleadorProfile({ user }: { user: User }) {
                 {/* Stats */}
                 <div className={styles.statsGrid}>
                     <div className={styles.statCard}>
-                        <span className={styles.statValue}>18</span>
+                        <span className={styles.statValue}>{jobs.length}</span>
                         <span className={styles.statLabel}>Trabajos Publicados</span>
                     </div>
                     <div className={styles.statCard}>
-                        <span className={styles.statValue}>34</span>
-                        <span className={styles.statLabel}>Contrataciones</span>
+                        <span className={styles.statValue}>-</span>
+                        <span className={styles.statLabel}>Hitos</span>
                     </div>
                     <div className={styles.statCard}>
-                        <span className={styles.statValue}>4.8</span>
+                        <span className={styles.statValue}>{user.rating || '5.0'}</span>
                         <span className={styles.statLabel}>Calificación</span>
                     </div>
                     <div className={styles.statCard} style={{ borderColor: 'var(--primary)' }}>
@@ -72,17 +99,25 @@ export default function EmpleadorProfile({ user }: { user: User }) {
                         <a href="/dashboard" className={styles.sectionAction}>+ Publicar nuevo</a>
                     </div>
                     <div className={styles.jobList}>
-                        {MOCK_JOBS_POSTED.map(job => (
-                            <div key={job.id} className={styles.jobRow}>
-                                <div className={styles.jobRowLeft}>
-                                    <p className={styles.jobRowTitle}>{job.title}</p>
-                                    <p className={styles.jobRowMeta}>{job.applicants} postulantes · {job.price}</p>
+                        {loading ? (
+                            <p style={{ color: 'var(--text-secondary)', padding: '1rem' }}>Cargando tus publicaciones...</p>
+                        ) : jobs.length === 0 ? (
+                            <p style={{ color: 'var(--text-secondary)', padding: '1rem' }}>No has publicado ningún trabajo aún.</p>
+                        ) : (
+                            jobs.map(job => (
+                                <div key={job.id} className={styles.jobRow}>
+                                    <div className={styles.jobRowLeft}>
+                                        <p className={styles.jobRowTitle}>{job.title}</p>
+                                        <p className={styles.jobRowMeta}>
+                                            {formatPrice(job.amount)} {job.payment_type === 'hourly' ? '/hora' : 'Total'}
+                                        </p>
+                                    </div>
+                                    <span className={`${styles.statusBadge} ${styles.statusActive}`}>
+                                        Activo
+                                    </span>
                                 </div>
-                                <span className={`${styles.statusBadge} ${job.status === 'Activo' ? styles.statusActive : styles.statusDone}`}>
-                                    {job.status}
-                                </span>
-                            </div>
-                        ))}
+                            ))
+                        )}
                     </div>
                 </section>
             </main>

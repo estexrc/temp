@@ -51,9 +51,9 @@ export default function EmpleadoProfile({ user }: { user: User }) {
                         </p>
                         <div className={styles.stars}>
                             {'★★★★★'.split('').map((s, i) => (
-                                <span key={i} style={{ color: i < 5 ? '#fbbf24' : '#334155' }}>{s}</span>
+                                <span key={i} style={{ color: i < (user.rating || 5) ? '#fbbf24' : '#334155' }}>{s}</span>
                             ))}
-                            <span className={styles.ratingNum}>5.0</span>
+                            <span className={styles.ratingNum}>{user.rating || '5.0'}</span>
                         </div>
                     </div>
                     <div className={`${styles.rolePill} ${styles.empleadoPill}`}>👷 Empleado</div>
@@ -62,22 +62,30 @@ export default function EmpleadoProfile({ user }: { user: User }) {
                 {/* Stats */}
                 <div className={styles.statsGrid}>
                     <div className={styles.statCard}>
-                        <span className={styles.statValue}>12</span>
+                        <span className={styles.statValue}>0</span>
                         <span className={styles.statLabel}>Trabajos completados</span>
                     </div>
                     <div className={styles.statCard}>
-                        <span className={styles.statValue}>$14k</span>
+                        <span className={styles.statValue}>$0</span>
                         <span className={styles.statLabel}>Ganancias mes</span>
                     </div>
                     <div className={styles.statCard}>
-                        <span className={styles.statValue}>48h</span>
+                        <span className={styles.statValue}>0h</span>
                         <span className={styles.statLabel}>Horas trabajadas</span>
                     </div>
                     <div className={styles.statCard} style={{ borderColor: 'var(--accent)' }}>
-                        <span className={styles.statValue}>Top 5%</span>
+                        <span className={styles.statValue}>-</span>
                         <span className={styles.statLabel}>Ranking</span>
                     </div>
                 </div>
+
+                {/* Bio (Optional) */}
+                {user.bio && (
+                    <section className={styles.section}>
+                        <h2 className={styles.sectionTitle}>Sobre mí</h2>
+                        <p style={{ color: 'var(--text-secondary)', lineHeight: '1.6' }}>{user.bio}</p>
+                    </section>
+                )}
 
                 {/* Skills */}
                 <section className={styles.section}>
@@ -99,15 +107,7 @@ export default function EmpleadoProfile({ user }: { user: User }) {
                 <section className={styles.section}>
                     <h2 className={styles.sectionTitle}>Historial de trabajos</h2>
                     <div className={styles.jobList}>
-                        {MOCK_HISTORY.map(job => (
-                            <div key={job.id} className={styles.jobRow}>
-                                <div className={styles.jobRowLeft}>
-                                    <p className={styles.jobRowTitle}>{job.title}</p>
-                                    <p className={styles.jobRowMeta}>{job.employer} · {job.date}</p>
-                                </div>
-                                <span className={styles.payTag}>{job.pay}</span>
-                            </div>
-                        ))}
+                        <p style={{ color: 'var(--text-secondary)', padding: '1rem' }}>Todavía no has completado ningún trabajo.</p>
                     </div>
                 </section>
             </main>

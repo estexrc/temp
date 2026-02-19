@@ -2,17 +2,18 @@
 
 import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth, UserRole } from '../context/AuthContext';
+import { supabase } from '@/lib/supabase';
 import styles from './register.module.css';
 
 type Step = 'role' | 'details';
+type UserRole = 'empleado' | 'empleador';
 
 export default function RegisterPage() {
     const router = useRouter();
-    const { login } = useAuth();
     const [step, setStep] = useState<Step>('role');
     const [role, setRole] = useState<UserRole | null>(null);
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
 
     // Shared
     const [name, setName] = useState('');
@@ -37,28 +38,51 @@ export default function RegisterPage() {
         e.preventDefault();
         if (!role) return;
         setLoading(true);
-        await new Promise(r => setTimeout(r, 700));
+        setError('');
 
-        const userData = role === 'empleado'
-            ? {
-                name,
+        try {
+            // 1. Sign up with Supabase Auth
+            const { data: authData, error: authError } = await supabase.auth.signUp({
                 email,
-                role,
-                skills: skills.split(',').map(s => s.trim()).filter(Boolean),
-                hourlyRate,
-                bio,
+                password,
+            });
+
+            if (authError) throw authError;
+
+            if (authData.user) {
+                // 2. Insert profile into public.profiles
+                const profileData = {
+                    id: authData.user.id,
+                    name,
+                    role,
+                    bio,
+                    // Empleado specific
+                    skills: role === 'empleado' ? skills.split(',').map(s => s.trim()).filter(Boolean) : null,
+                    hourly_rate: role === 'empleado' ? (parseFloat(hourlyRate) || 0) : null,
+                    // Empleador specific
+                    company: role === 'empleador' ? company : null,
+                    sector: role === 'empleador' ? sector : null,
+                };
+
+                const { error: profileError } = await supabase
+                    .from('profiles')
+                    .insert(profileData);
+
+                if (profileError) {
+                    // If profile creation fails, we might want to show an error or retry
+                    // Ideally we should probably rollback the auth user but for now just throw
+                    console.error('Error creating profile:', profileError);
+                    throw new Error('Error al crear el perfil de usuario.');
+                }
+
+                // Success!
+                router.push('/dashboard');
             }
-            : {
-                name,
-                email,
-                role,
-                company,
-                sector,
-                bio,
-            };
-
-        login(userData);
-        router.push('/dashboard');
+        } catch (err: any) {
+            setError(err.message || 'Ocurrió un error al registrarse.');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -112,6 +136,8 @@ export default function RegisterPage() {
                         <h1 className={styles.title}>Creá tu perfil</h1>
                         <p className={styles.subtitle}>Completá tus datos para empezar</p>
 
+                        {error && <div style={{ color: '#f87171', background: 'rgba(239,68,68,0.1)', padding: '0.75rem', borderRadius: '0.5rem', marginBottom: '1rem', fontSize: '0.9rem' }}>{error}</div>}
+
                         <form className={styles.form} onSubmit={handleSubmit}>
                             <div className={styles.row}>
                                 <div className={styles.field}>
@@ -127,7 +153,7 @@ export default function RegisterPage() {
                                 </div>
                                 <div className={styles.field}>
                                     <label className={styles.label}>Contraseña *</label>
-                                    <input type="password" className={styles.input} placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} required />
+                                    <input type="password" className={styles.input} placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} required minLength={6} />
                                 </div>
                             </div>
 

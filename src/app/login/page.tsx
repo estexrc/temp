@@ -2,12 +2,11 @@
 
 import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '../context/AuthContext';
+import { supabase } from '@/lib/supabase';
 import styles from './login.module.css';
 
 export default function LoginPage() {
     const router = useRouter();
-    const { login } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -22,17 +21,21 @@ export default function LoginPage() {
         }
         setLoading(true);
 
-        // Simulate async auth
-        await new Promise(r => setTimeout(r, 800));
+        try {
+            const { error: authError } = await supabase.auth.signInWithPassword({
+                email,
+                password,
+            });
 
-        // Mock login: any credentials work, role from stored userData if exists
-        const mockUser = {
-            name: email.split('@')[0].replace(/[._]/g, ' '),
-            email,
-            role: 'empleado' as const,
-        };
-        login(mockUser);
-        router.push('/dashboard');
+            if (authError) {
+                throw new Error('Email o contraseña incorrectos.');
+            }
+
+            router.push('/dashboard');
+        } catch (err: any) {
+            setError(err.message || 'Ocurrió un error al ingresar.');
+            setLoading(false);
+        }
     };
 
     return (

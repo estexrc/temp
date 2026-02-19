@@ -437,3 +437,17 @@
     width: 1.5rem;
     height: 1.5rem;
 }
+
+.loadingContainer,
+.emptyContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 1rem;
+    border: 1px dashed rgba(255, 255, 255, 0.1);
+    color: var(--text-secondary);
+    font-size: 1rem;
+    margin-top: 1rem;
+}
