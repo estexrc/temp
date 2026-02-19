@@ -143,6 +143,13 @@
     border: 2px solid var(--surface);
     cursor: pointer;
     box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1);
+    text-decoration: none;
+    transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.avatar:hover {
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.35);
+    transform: scale(1.05);
 }
 
 /* Welcome Section */
@@ -299,6 +306,14 @@
     opacity: 1;
 }
 
+.urgentCard {
+    border-color: rgba(251, 146, 60, 0.3);
+}
+
+.urgentCard::before {
+    background: #fb923c;
+}
+
 .jobHeader {
     display: flex;
     justify-content: space-between;
@@ -404,6 +419,18 @@
 
 .fab:active {
     transform: scale(0.95);
+}
+
+.fabOpen {
+    transform: rotate(45deg);
+    background: #ef4444;
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+}
+
+.fabOpen:hover {
+    background: #dc2626;
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.6);
+    transform: rotate(45deg) scale(1.05);
 }
 
 .fabIcon {

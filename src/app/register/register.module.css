@@ -1,0 +1,307 @@
+.page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--background);
+    padding: 2rem 1rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.blob1 {
+    width: 450px;
+    height: 450px;
+    background: rgba(99, 102, 241, 0.12);
+    top: -150px;
+    right: -100px;
+    animation: drift 14s ease-in-out infinite;
+}
+
+.blob2 {
+    width: 350px;
+    height: 350px;
+    background: rgba(16, 185, 129, 0.08);
+    bottom: -100px;
+    left: -80px;
+    animation: drift 18s ease-in-out infinite reverse;
+}
+
+@keyframes drift {
+
+    0%,
+    100% {
+        transform: translate(0, 0);
+    }
+
+    50% {
+        transform: translate(20px, -20px);
+    }
+}
+
+.card {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 600px;
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 1.5rem;
+    padding: 2.5rem 2rem;
+    animation: slideUp 0.4s cubic-bezier(0.34, 1.2, 0.64, 1) both;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 1.4rem;
+    font-weight: 800;
+    background: linear-gradient(to right, #818cf8, #c084fc);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 2rem;
+    text-decoration: none;
+}
+
+.title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+    text-align: center;
+    margin-bottom: 0.4rem;
+}
+
+.subtitle {
+    color: #94a3b8;
+    text-align: center;
+    font-size: 0.9rem;
+    margin-bottom: 2rem;
+}
+
+/* Role selection grid */
+.roleGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+@media (max-width: 480px) {
+    .roleGrid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.roleCard {
+    background: rgba(15, 23, 42, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.25s;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.roleCard:hover {
+    border-color: var(--primary);
+    background: rgba(99, 102, 241, 0.1);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.2);
+}
+
+.roleIcon {
+    font-size: 2.5rem;
+    margin-bottom: 0.25rem;
+}
+
+.roleTitle {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: white;
+}
+
+.roleDesc {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    line-height: 1.4;
+}
+
+.roleArrow {
+    position: absolute;
+    top: 1.25rem;
+    right: 1.25rem;
+    font-size: 1.1rem;
+    color: #475569;
+    transition: transform 0.2s, color 0.2s;
+}
+
+.roleCard:hover .roleArrow {
+    transform: translateX(4px);
+    color: #818cf8;
+}
+
+.loginLink {
+    display: block;
+    text-align: center;
+    color: #64748b;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.loginLink:hover {
+    color: #818cf8;
+}
+
+/* Step 2 */
+.backBtn {
+    background: transparent;
+    border: none;
+    color: #64748b;
+    cursor: pointer;
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+    padding: 0;
+    transition: color 0.2s;
+}
+
+.backBtn:hover {
+    color: #94a3b8;
+}
+
+.roleBadge {
+    display: inline-block;
+    padding: 0.3rem 0.75rem;
+    border-radius: 99px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.empleadorBadge {
+    background: rgba(99, 102, 241, 0.15);
+    color: #818cf8;
+    border: 1px solid rgba(99, 102, 241, 0.3);
+}
+
+.empleadoBadge {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--accent);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+/* Form */
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+}
+
+@media (max-width: 480px) {
+    .row {
+        grid-template-columns: 1fr;
+    }
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.input {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 0.75rem;
+    padding: 0.75rem 1rem;
+    color: white;
+    font-size: 0.9rem;
+    font-family: inherit;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    width: 100%;
+}
+
+.textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+.input:focus {
+    outline: none;
+    border-color: rgba(99, 102, 241, 0.6);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+}
+
+.input::placeholder {
+    color: #475569;
+}
+
+.submitBtn {
+    margin-top: 0.5rem;
+    width: 100%;
+    padding: 0.9rem;
+    background: var(--primary);
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+}
+
+.submitBtn:hover:not(:disabled) {
+    background: var(--primary-hover);
+    transform: translateY(-1px);
+}
+
+.submitBtn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.roleStep {}
