@@ -1,12 +1,16 @@
 
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim();
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.trim();
 
-if (!supabaseUrl || !supabaseAnonKey) {
-    if (typeof window !== 'undefined') {
-        console.error('ERROR: Supabase environment variables are missing! Ensure NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY are set in your deployment platform.');
+if (typeof window !== 'undefined') {
+    if (!supabaseUrl) console.error('Supabase Error: NEXT_PUBLIC_SUPABASE_URL is missing');
+    if (!supabaseAnonKey) console.error('Supabase Error: NEXT_PUBLIC_SUPABASE_ANON_KEY is missing');
+
+    // Safety check for malformed keys (too short, etc.)
+    if (supabaseAnonKey && supabaseAnonKey.length < 20) {
+        console.error('Supabase Error: NEXT_PUBLIC_SUPABASE_ANON_KEY seems dangerously short/malformed');
     }
 }
 
