@@ -43,56 +43,7 @@ const timeAgo = (dateStr: string) => {
     return then.toLocaleDateString();
 };
 
-const INITIAL_JOBS: Job[] = [
-    {
-        id: 1,
-        title: 'Ayuda mudanza caja fuerte',
-        employer: 'Carlos M.',
-        verified: true,
-        price: '$50',
-        type: 'Total',
-        location: 'Palermo, CABA',
-        time: 'Hace 2h',
-        tags: ['Fuerza física', 'Mudanza', 'Urgente'],
-        urgent: true,
-    },
-    {
-        id: 2,
-        title: 'Paseador de perros fin de semana',
-        employer: 'Ana G.',
-        verified: true,
-        price: '$1500',
-        type: '/hora',
-        location: 'Recoleta, CABA',
-        time: 'Hace 45min',
-        tags: ['Mascotas', 'Aire libre'],
-        urgent: false,
-    },
-    {
-        id: 3,
-        title: 'Barista evento privado',
-        employer: 'Café Start',
-        verified: false,
-        price: '$2000',
-        type: '/hora',
-        location: 'Microcentro',
-        time: 'Hace 3h',
-        tags: ['Barista', 'Eventos', 'Gastronomía'],
-        urgent: false,
-    },
-    {
-        id: 4,
-        title: 'Limpieza post-obra',
-        employer: 'Consorcio B.',
-        verified: true,
-        price: '$12000',
-        type: 'Total',
-        location: 'Belgrano, CABA',
-        time: 'Hace 5min',
-        tags: ['Limpieza', 'Detalle'],
-        urgent: true,
-    },
-];
+
 
 export default function Dashboard() {
     const [jobs, setJobs] = useState<Job[]>([]);
