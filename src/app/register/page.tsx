@@ -41,41 +41,29 @@ export default function RegisterPage() {
         setError('');
 
         try {
-            // 1. Sign up with Supabase Auth
+            // 1. Sign up with Supabase Auth + Metadata
+            // We pass details in metadata so the DB Trigger can create the profile automatically
             const { data: authData, error: authError } = await supabase.auth.signUp({
                 email,
                 password,
+                options: {
+                    data: {
+                        name,
+                        role,
+                        bio,
+                        skills: role === 'empleado' ? skills.split(',').map(s => s.trim()).filter(Boolean) : [],
+                        hourly_rate: role === 'empleado' ? (parseFloat(hourlyRate) || 0) : null,
+                        company: role === 'empleador' ? company : null,
+                        sector: role === 'empleador' ? sector : null,
+                    }
+                }
             });
 
             if (authError) throw authError;
 
             if (authData.user) {
-                // 2. Insert profile into public.profiles
-                const profileData = {
-                    id: authData.user.id,
-                    name,
-                    role,
-                    bio,
-                    // Empleado specific
-                    skills: role === 'empleado' ? skills.split(',').map(s => s.trim()).filter(Boolean) : null,
-                    hourly_rate: role === 'empleado' ? (parseFloat(hourlyRate) || 0) : null,
-                    // Empleador specific
-                    company: role === 'empleador' ? company : null,
-                    sector: role === 'empleador' ? sector : null,
-                };
-
-                const { error: profileError } = await supabase
-                    .from('profiles')
-                    .insert(profileData);
-
-                if (profileError) {
-                    // If profile creation fails, we might want to show an error or retry
-                    // Ideally we should probably rollback the auth user but for now just throw
-                    console.error('Error creating profile:', profileError);
-                    throw new Error('Error al crear el perfil de usuario.');
-                }
-
-                // Success!
+                // The profile is now created automatically by the database trigger!
+                // We just wait a brief moment and redirect
                 router.push('/dashboard');
             }
         } catch (err: any) {
